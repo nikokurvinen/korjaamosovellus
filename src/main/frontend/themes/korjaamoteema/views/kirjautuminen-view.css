@@ -1,0 +1,21 @@
+/* Kirjautumis-, rekisteröitymis- ja salasanasivujen yhteinen tausta. Rajattu .auth-view-luokkaan. */
+.auth-view {
+  background:
+    radial-gradient(circle at 20% 20%, hsla(24, 95%, 50%, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 80%, hsla(205, 35%, 45%, 0.2), transparent 50%),
+    var(--korjaamo-paperi);
+}
+
+.auth-view .auth-kortti {
+  background: #fff;
+  border-top: 5px solid var(--korjaamo-oranssi);
+  border-radius: var(--lumo-border-radius-l);
+  box-shadow: var(--lumo-box-shadow-m);
+  padding: var(--lumo-space-l);
+  width: min(420px, 100%);
+  box-sizing: border-box;
+}
+
+.auth-view vaadin-login-form-wrapper {
+  --lumo-base-color: #fff;
+}

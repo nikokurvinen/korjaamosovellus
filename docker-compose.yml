@@ -1,0 +1,62 @@
+# Koko ympäristö yhdellä komennolla (vaatimus 25):
+#
+#   docker compose up --build
+#
+#   Sovellus:  http://localhost:8080   (admin/admin123 · super/super123 · user/user123)
+#   Mailpit:   http://localhost:8025   (rekisteröitymis- ja salasanaviestit)
+#
+# Tietokannan tunnukset voi vaihtaa .env-tiedostolla (DB_USER, DB_PASSWORD).
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: korjaamo
+      POSTGRES_USER: ${DB_USER:-korjaamo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-korjaamo}
+    volumes:
+      - tietokanta:/var/lib/postgresql/data
+    # Sovellus käynnistetään vasta, kun PostgreSQL oikeasti vastaa kyselyihin – pelkkä
+    # depends_on odottaisi vain kontin käynnistymistä, jolloin ensimmäinen yhteys epäonnistuisi.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+    restart: unless-stopped
+
+  app:
+    build: .
+    image: korjaamosovellus:latest
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://db:5432/korjaamo
+      DB_USER: ${DB_USER:-korjaamo}
+      DB_PASSWORD: ${DB_PASSWORD:-korjaamo}
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      APP_BASE_URL: http://localhost:8080
+      # Kontin oletusaikavyöhyke on UTC; historia ja live-muutokset halutaan Suomen ajassa.
+      TZ: Europe/Helsinki
+    ports:
+      - "8080:8080"
+    volumes:
+      - liitteet:/data/liitteet
+    restart: unless-stopped
+
+# Nimetyt volumet säilyttävät tietokannan ja liitetiedostot konttien poistamisen yli.
+# Kaiken datan saa nollattua komennolla: docker compose down -v
+volumes:
+  tietokanta:
+  liitteet:

@@ -1,0 +1,97 @@
+/*
+ * Työjono-näkymän oma CSS (vaatimus 8).
+ * Kaikki säännöt on rajattu juuriluokkaan .tyojono-view, jonka TyojonoView asettaa itselleen
+ * addClassName()-kutsulla. Siksi nämä tyylit eivät vaikuta mihinkään muuhun näkymään, vaikka
+ * tiedosto ladataan globaalisti teeman mukana.
+ * Tyyli vaikuttaa näkymän useisiin Vaadin-komponentteihin: H2, H3, Button, Span (badge) ja
+ * kanban-sarakkeina toimiviin VerticalLayouteihin.
+ */
+.tyojono-view {
+  background:
+    linear-gradient(hsla(0, 0%, 100%, 0.92), hsla(0, 0%, 100%, 0.92)),
+    repeating-linear-gradient(90deg, hsla(210, 15%, 40%, 0.08) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(0deg, hsla(210, 15%, 40%, 0.08) 0 1px, transparent 1px 40px);
+}
+
+.tyojono-view h2 {
+  font-size: 2rem;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--korjaamo-grafiitti);
+  border-bottom: 4px solid var(--korjaamo-oranssi);
+  padding-bottom: 0.1em;
+}
+
+.tyojono-view .kanban-sarake {
+  background: hsla(210, 15%, 30%, 0.06);
+  border-radius: var(--lumo-border-radius-l);
+  border-top: 5px solid var(--sarakkeen-vari, var(--korjaamo-teras));
+  min-width: 250px;
+  flex: 1 1 250px;
+}
+
+.tyojono-view .kanban-sarake h3 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.tyojono-view .kanban-sarake h3 .maara {
+  background: var(--sarakkeen-vari, var(--korjaamo-teras));
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 0.6em;
+  font-size: 0.9rem;
+}
+
+/* Työkortti: hover zoomaa 3 %, focus näyttää paksun ääriviivan, transition pehmentää (vaatimus 10) */
+.tyojono-view .tyokortti {
+  background: #fff;
+  border-radius: var(--lumo-border-radius-m);
+  border-left: 5px solid var(--sarakkeen-vari, var(--korjaamo-teras));
+  box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.12);
+  padding: var(--lumo-space-s) var(--lumo-space-m);
+  width: 100%;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  outline: none;
+}
+
+.tyojono-view .tyokortti:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px hsla(0, 0%, 0%, 0.18);
+}
+
+.tyojono-view .tyokortti:focus-visible {
+  transform: scale(1.03);
+  box-shadow: 0 0 0 3px var(--korjaamo-teras), 0 8px 20px hsla(0, 0%, 0%, 0.18);
+}
+
+.tyojono-view .tyokortti.juuri-paivitetty {
+  animation: tyojono-valahdys 1.6s ease-out;
+}
+
+@keyframes tyojono-valahdys {
+  0%   { background: hsla(24, 95%, 50%, 0.35); }
+  100% { background: #fff; }
+}
+
+.tyojono-view vaadin-button {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: var(--lumo-font-size-s);
+}
+
+.tyojono-view .tyokortti vaadin-button {
+  margin-top: var(--lumo-space-xs);
+}
+
+@media (max-width: 640px) {
+  .tyojono-view .kanban-sarake {
+    min-width: 100%;
+  }
+}
